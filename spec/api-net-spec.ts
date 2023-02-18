@@ -1442,7 +1442,7 @@ describe('net module', () => {
         });
         const body = await net.fetch(serverUrl, { bypassCustomProtocolHandlers: true }).then(r => r.text());
         expect(body).to.equal('hi');
-        expect(webRequestDetails).to.have.property('url', serverUrl);
+        expect(webRequestDetails).to.have.property('node:url', serverUrl);
       });
     });
 

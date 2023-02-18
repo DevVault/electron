@@ -844,7 +844,7 @@ describe('node feature', () => {
       exitPromise = once(child, 'exit');
 
       const [{ cmd, debuggerEnabled, success }] = await once(child, 'message');
-      expect(cmd).to.equal('assert');
+      expect(cmd).to.equal('node:assert');
       expect(debuggerEnabled).to.be.true();
       expect(success).to.be.true();
     });
