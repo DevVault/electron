@@ -28,6 +28,12 @@ class IsolateData;
 
 namespace electron {
 
+// Choose a reasonable unique index that's higher than any Blink uses
+// and thus unlikley to collide with an existing index.
+#ifndef ELECTRON_CONTEXT_EMBEDDER_DATA_INDEX
+#define ELECTRON_CONTEXT_EMBEDDER_DATA_INDEX 12
+#endif
+
 // A helper class to manage uv_handle_t types, e.g. uv_async_t.
 //
 // As per the uv docs: "uv_close() MUST be called on each handle before
@@ -108,11 +114,17 @@ class NodeBindings {
   // Notify embed thread to start polling after environment is loaded.
   void StartPolling();
 
-  // Gets/sets the per isolate data.
-  void set_isolate_data(node::IsolateData* isolate_data) {
-    isolate_data_ = isolate_data;
+  // Clears the PerIsolateData.
+  void clear_isolate_data(v8::Local<v8::Context> context) {
+    context->SetAlignedPointerInEmbedderData(
+        ELECTRON_CONTEXT_EMBEDDER_DATA_INDEX, nullptr);
   }
-  node::IsolateData* isolate_data() const { return isolate_data_; }
+
+  node::IsolateData* isolate_data(v8::Local<v8::Context> context) const {
+    return static_cast<node::IsolateData*>(
+        context->GetAlignedPointerFromEmbedderData(
+            ELECTRON_CONTEXT_EMBEDDER_DATA_INDEX));
+  }
 
   // Gets/sets the environment to wrap uv loop.
   void set_uv_env(node::Environment* env) { uv_env_ = env; }
